@@ -1,0 +1,59 @@
+{
+  "name": "trailpack-bookshelf",
+  "version": "0.0.1",
+  "description": "Bookshelf Trailpack",
+  "homepage": "https://github.com/zuker/trailpack-bookshelf",
+  "author": {
+    "name": "Leonid Kuzmin",
+    "email": "lndkuzmin@gmail.com",
+    "url": "http://zuker.github.io"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+hhttps://github.com/zuker/trailpack-bookshelf.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "dist/index.js",
+  "keywords": [
+    "trailpack",
+    "trails",
+    "trailjs"
+  ],
+  "dependencies": {
+    "bluebird": "^3.3.1",
+    "bookshelf": "^0.9.1",
+    "bookshelf-schema": "^0.2.1",
+    "joi": "^8.0.1",
+    "knex": "^0.10.0",
+    "lodash": "^4.5.0",
+    "trailpack": "latest",
+    "trailpack-datastore": "^1.0.0",
+    "trails-service": "^1.0.0-beta-2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.5.1",
+    "babel-eslint": "^5.0.0",
+    "babel-preset-es2015-node4": "^2.0.3",
+    "babel-register": "^6.5.2",
+    "chai": "^3.5.0",
+    "chai-as-promised": "^5.2.0",
+    "eslint": "^2.2.0",
+    "eslint-config-trails": "^1.0.4",
+    "mocha": "^2.3",
+    "smokesignals": "^1.0.2",
+    "sqlite3": "^3.1.1",
+    "trailpack-core": "^1.0.0-beta-3",
+    "trails-model": "^1.0.0-beta-2"
+  },
+  "scripts": {
+    "test": "eslint . && mocha",
+    "clean": "rm -rf ./dist && rm -f ./test/.app.db",
+    "prepublish": "npm run clean && node_modules/.bin/babel --source-maps -d ./dist ./src"
+  },
+  "engines": {
+    "node": ">= 4.0.0"
+  },
+  "license": "MIT"
+}
