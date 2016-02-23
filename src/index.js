@@ -30,12 +30,11 @@ const findBsStores = stores => reduce(stores, (res, store, storeName) =>
   Object.assign(res, store.orm === 'bookshelf' ? { [storeName]: store } : {}), {});
 
 /**
- * Waterline Trailpack
+ * Bookshelf Trailpack
  *
- * Allow the trails application to interface with the Waterline ORM. Similar to
- * the Sails "orm" hook, but cleaner and less crazy.
+ * Allow the trails application to interface with the Bookshelf ORM.
  *
- * @see {@link https://github.com/balderdashy/sails/blob/master/lib/hooks/orm/build-orm.js}
+ * @see {@link http://bookshelfjs.org}
  */
 module.exports = class BookshelfTrailpack extends DatastoreTrailpack {
   constructor(app) {
