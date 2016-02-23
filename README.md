@@ -16,7 +16,7 @@ generate Footprints for routes.
 module.exports = {
   // ...
   packs: [
-    require('trailpack-waterline')
+    require('trailpack-bookshelf')
   ]
 }
 ```
