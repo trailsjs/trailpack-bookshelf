@@ -1,9 +1,20 @@
 'use strict';
 
-const { merge, reduce, isArray, isEmpty, each, find, mapValues, values, uniq, pickBy } = require('lodash');
+const {
+  merge,
+  reduce,
+  isArray,
+  isEmpty,
+  each,
+  find,
+  mapValues,
+  values,
+  uniq,
+  pickBy
+  } = require('lodash');
 const DatastoreTrailpack = require('trailpack-datastore');
 const { object, string, any, boolean, validate } = require('joi');
-const { resolve, reject, fromCallback, each: promiseEach } = require('bluebird');
+const { fromCallback, each: promiseEach, resolve, reject } = require('bluebird');
 const knex = require('knex');
 const bookshelf = require('bookshelf');
 
@@ -14,7 +25,7 @@ const api = require('./api');
 const databaseConfigSchema = object().keys({
   models: object().keys({
     defaultStore: string().required(),
-    migrate: any().allow(['none', 'drop', 'create']),
+    migrate: any().allow(['none', 'drop', 'alter']),
     hasTimestamps: boolean()
   }),
   stores: object()
@@ -22,7 +33,7 @@ const databaseConfigSchema = object().keys({
 
 const failsafeConfig =  {
   footprints: {
-    models: { }
+    models: {}
   }
 };
 
@@ -52,7 +63,7 @@ module.exports = class BookshelfTrailpack extends DatastoreTrailpack {
       .then(() => find(findBsStores(database.stores), store => {
         try {
           require(store.client);
-        } catch(e) {
+        } catch (e) {
           return reject(e);
         }
       }))
@@ -66,7 +77,8 @@ module.exports = class BookshelfTrailpack extends DatastoreTrailpack {
     super.configure();
     const { orm } = this.app.config.database;
     const bookshelfArr = ['bookshelf'];
-    this.app.config.database.orm = orm ? (isArray(orm) ? orm.concat(bookshelfArr) : [orm, 'bookshelf']) : bookshelfArr;
+    this.app.config.database.orm =
+      orm ? (isArray(orm) ? orm.concat(bookshelfArr) : [orm, 'bookshelf']) : bookshelfArr;
     merge(this.app.config, failsafeConfig);
   }
 

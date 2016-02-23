@@ -1,8 +1,8 @@
 {
   "name": "trailpack-bookshelf",
-  "version": "0.0.1",
+  "version": "1.0.0-alpha-1",
   "description": "Bookshelf Trailpack",
-  "homepage": "https://github.com/zuker/trailpack-bookshelf",
+  "homepage": "https://github.com/trailsjs/trailpack-bookshelf",
   "author": {
     "name": "Leonid Kuzmin",
     "email": "lndkuzmin@gmail.com",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+hhttps://github.com/zuker/trailpack-bookshelf.git"
+    "url": "git+https://github.com/trailsjs/trailpack-bookshelf.git"
   },
   "files": [
     "dist"
@@ -49,7 +49,7 @@
     "trails-model": "^1.0.0-beta-2"
   },
   "scripts": {
-    "test": "node_modules/.bin/mocha",
+    "test": "node_modules/.bin/eslint src && node_modules/.bin/mocha",
     "clean": "rm -rf ./dist && rm -f ./test/.app.db",
     "prepublish": "npm run clean && node_modules/.bin/babel --source-maps -d ./dist ./src"
   },

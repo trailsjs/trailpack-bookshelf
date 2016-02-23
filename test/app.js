@@ -133,13 +133,6 @@ module.exports = defaultsDeep({
         defaultStore: 'teststore',
         migrate: 'drop'
       }
-    },
-    footprints: {
-      models: {
-        options: {
-          defaultLimit: 100
-        }
-      }
     }
   }
 }, FailsafeConfig);
