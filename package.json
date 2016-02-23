@@ -48,7 +48,7 @@
     "trails-model": "^1.0.0-beta-2"
   },
   "scripts": {
-    "test": "eslint . && mocha",
+    "test": "node_modules/.bin/mocha",
     "clean": "rm -rf ./dist && rm -f ./test/.app.db",
     "prepublish": "npm run clean && node_modules/.bin/babel --source-maps -d ./dist ./src"
   },
