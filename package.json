@@ -53,7 +53,7 @@
   "scripts": {
     "clean:coverage": "rm -rf ./coverage",
     "test": "node_modules/.bin/eslint src && node_modules/.bin/mocha",
-    "coverage": "npm run clean:coverage && node_modules/.bin/nyc --require babel-core/register --reporter lcovonly npm test && ./node_modules/.bin/codecov -t $CODECOV_TOKEN",
+    "coverage": "npm run clean:coverage && node_modules/.bin/nyc --require babel-core/register --reporter lcovonly npm test && ./node_modules/.bin/codecov",
     "clean": "rm -rf ./dist && rm -f ./test/.app.db && npm run clean:coverage",
     "prepublish": "npm run clean && node_modules/.bin/babel --source-maps -d ./dist ./src"
   },
