@@ -3,6 +3,7 @@
 [![Gitter][gitter-image]][gitter-url]
 [![Build status][ci-image]][ci-url]
 [![Dependency Status][daviddm-image]][daviddm-url]
+[![codecov.io][codecov-image]][codecov-url]
 
 Loads Application Models (in `api/models`) into the [Bookshelf ORM](http://bookshelfjs.org/); Integrates with [trailpack-router](https://github.com/trailsjs/trailpack-router) to
 generate Footprints for routes.
@@ -141,3 +142,5 @@ information on how our projects are organized and how to get started.
 [daviddm-url]: https://david-dm.org/trailsjs/trailpack-bookshelf
 [gitter-image]: http://img.shields.io/badge/+%20GITTER-JOIN%20CHAT%20%E2%86%92-1DCE73.svg?style=flat-square
 [gitter-url]: https://gitter.im/trailsjs/trails
+[codecov-image]: https://codecov.io/github/zuker/trailpack-bookshelf/coverage.svg?branch=master
+[codecov-url]: https://codecov.io/github/zuker/trailpack-bookshelf?branch=master

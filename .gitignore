@@ -37,3 +37,4 @@ jspm_packages
 /dist
 /test/.app.db
 /.idea
+/.nyc_output
