@@ -1,9 +1,16 @@
 'use strict';
 const { isEmpty } = require('lodash');
+const start = require('../app');
 
 describe('api.services.FootprintService', () => {
   let FootprintService;
-  before(() => FootprintService = global.app.services.FootprintService);
+  let app;
+  before(() => start()
+    .then(_app => {
+      app = _app;
+      ({ FootprintService } = app.services);
+    }));
+  after(() => app.stop());
   describe('#create', () => {
     const create = { name: 'createtest' };
     it('should insert a record', () => FootprintService

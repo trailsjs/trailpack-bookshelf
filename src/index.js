@@ -31,6 +31,12 @@ const databaseConfigSchema = object().keys({
   stores: object()
 });
 
+const storeSchema = object().keys({
+  client: any().allow(['sqlite3', 'pg', 'mysql']),
+  connection: any(),
+  orm: any().allow('bookshelf')
+}).unknown();
+
 const failsafeConfig =  {
   footprints: {
     models: {}
@@ -58,16 +64,26 @@ module.exports = class BookshelfTrailpack extends DatastoreTrailpack {
    */
   validate() {
     const { database } = this.app.config;
+    const bsStores = findBsStores(database.stores);
     return super
       .validate()
-      .then(() => find(findBsStores(database.stores), store => {
-        try {
-          require(store.client);
-        } catch (e) {
-          return reject(e);
+      .then(() => fromCallback(cb => validate(database, databaseConfigSchema, cb)))
+      .then(() => promiseEach(
+        values(bsStores),
+        store => fromCallback(cb => validate(store, storeSchema, cb)))
+      )
+      .then(() => {
+        const invalidStore = find(bsStores, store => {
+          try {
+            require(store.client);
+          } catch (e) {
+            return true;
+          }
+        });
+        if (invalidStore) {
+          return reject(new Error(`Invalid store client ${invalidStore.client}`));
         }
-      }))
-      .then(() => fromCallback(cb => validate(database, databaseConfigSchema, cb)));
+      });
   }
 
   /**
@@ -76,9 +92,9 @@ module.exports = class BookshelfTrailpack extends DatastoreTrailpack {
   configure() {
     super.configure();
     const { orm } = this.app.config.database;
-    const bookshelfArr = ['bookshelf'];
+    const bookshelf = 'bookshelf';
     this.app.config.database.orm =
-      orm ? (isArray(orm) ? orm.concat(bookshelfArr) : [orm, 'bookshelf']) : bookshelfArr;
+      orm ? (isArray(orm) ? orm.concat([bookshelf]) : [orm, bookshelf]) : bookshelf;
     merge(this.app.config, failsafeConfig);
   }
 
