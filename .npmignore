@@ -1,0 +1,6 @@
+/src
+/test
+/.editorconfig
+/.babelrc
+/.travis.yml
+/.eslintrc.js
