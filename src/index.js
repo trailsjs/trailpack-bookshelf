@@ -64,8 +64,7 @@ module.exports = class BookshelfTrailpack extends DatastoreTrailpack {
   validate() {
     const { database } = this.app.config;
     const bsStores = findBsStores(database.stores);
-    return super
-      .validate()
+    return resolve(super.validate())
       .then(() => fromCallback(cb => validate(database, databaseConfigSchema, cb)))
       .then(() => promiseEach(
         values(bsStores),
