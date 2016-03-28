@@ -11,8 +11,8 @@ const {
   isArray
   } = require('lodash');
 const Service = require('trails-service');
+
 const model = Symbol('model');
-const association = Symbol('association');
 const limit = Symbol('limit');
 const forge = Symbol('forge');
 const related = Symbol('forge');
@@ -75,27 +75,16 @@ module.exports = class FootprintService extends Service {
       return Promise.reject(new Error('Model not found'));
     }
   }
-  [association](parentModelName, childAttributeName, parentId) {
-    return this[model](parentModelName, childAttributeName)
-      .then(ParentModel => {
-        const parentModel = new ParentModel({ [ParentModel.forge().idAttribute]: parentId });
-        if (parentModel[childAttributeName]) {
-          return parentModel[childAttributeName]();
-        } else {
-          return Promise.reject(new Error('Association not defined'));
-        }
-      });
-  }
   [forge](modelName, values = {}) {
     return this[model](modelName)
       .then(Model => {
         return Model.forge(idCriteria(Model.forge(), values));
-      })
+      });
   }
   [related](parentModelName, relationName, parentId, withParent = false) {
     return this[forge](parentModelName, parentId)
       .then(parentModel => {
-        let relation = parentModel.related(relationName);
+        const relation = parentModel.related(relationName);
         if (relation) {
           if (withParent) {
             return [relation, parentModel];
@@ -262,7 +251,7 @@ module.exports = class FootprintService extends Service {
           return parentModel
             .fetch({ withRelated: [childAttributeName] })
             .then(res => {
-              let model = res.related(childAttributeName);
+              const model = res.related(childAttributeName);
               return model.save(omitModelAutoValues(model, update), options);
             });
         } else {

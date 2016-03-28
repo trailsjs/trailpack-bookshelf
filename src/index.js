@@ -1,9 +1,20 @@
 'use strict';
 
-const { merge, reduce, isArray, isEmpty, each, find, mapValues, values, uniq, pickBy } = require('lodash');
+const {
+  merge,
+  reduce,
+  isArray,
+  isEmpty,
+  each,
+  find,
+  mapValues,
+  values,
+  uniq,
+  pickBy
+  } = require('lodash');
 const DatastoreTrailpack = require('trailpack-datastore');
 const { object, string, any, boolean, validate } = require('joi');
-const { resolve, reject, fromCallback, each: promiseEach } = require('bluebird');
+const { fromCallback, each: promiseEach, resolve, reject } = require('bluebird');
 const knex = require('knex');
 const bookshelf = require('bookshelf');
 
@@ -14,15 +25,21 @@ const api = require('./api');
 const databaseConfigSchema = object().keys({
   models: object().keys({
     defaultStore: string().required(),
-    migrate: any().allow(['none', 'drop', 'create']),
+    migrate: any().allow(['none', 'drop', 'alter']),
     hasTimestamps: boolean()
   }),
   stores: object()
 });
 
+const storeSchema = object().keys({
+  client: any().allow(['sqlite3', 'pg', 'mysql']),
+  connection: any(),
+  orm: any().allow('bookshelf')
+}).unknown();
+
 const failsafeConfig =  {
   footprints: {
-    models: { }
+    models: {}
   }
 };
 
@@ -46,16 +63,25 @@ module.exports = class BookshelfTrailpack extends DatastoreTrailpack {
    */
   validate() {
     const { database } = this.app.config;
-    return super
-      .validate()
-      .then(() => find(findBsStores(database.stores), store => {
-        try {
-          require(store.client);
-        } catch(e) {
-          return reject(e);
+    const bsStores = findBsStores(database.stores);
+    return resolve(super.validate())
+      .then(() => fromCallback(cb => validate(database, databaseConfigSchema, cb)))
+      .then(() => promiseEach(
+        values(bsStores),
+        store => fromCallback(cb => validate(store, storeSchema, cb)))
+      )
+      .then(() => {
+        const invalidStore = find(bsStores, store => {
+          try {
+            require(store.client);
+          } catch (e) {
+            return true;
+          }
+        });
+        if (invalidStore) {
+          return reject(new Error(`Invalid store client ${invalidStore.client}`));
         }
-      }))
-      .then(() => fromCallback(cb => validate(database, databaseConfigSchema, cb)));
+      });
   }
 
   /**
@@ -64,8 +90,9 @@ module.exports = class BookshelfTrailpack extends DatastoreTrailpack {
   configure() {
     super.configure();
     const { orm } = this.app.config.database;
-    const bookshelfArr = ['bookshelf'];
-    this.app.config.database.orm = orm ? (isArray(orm) ? orm.concat(bookshelfArr) : [orm, 'bookshelf']) : bookshelfArr;
+    const bookshelf = 'bookshelf';
+    this.app.config.database.orm =
+      orm ? (isArray(orm) ? orm.concat([bookshelf]) : [orm, bookshelf]) : bookshelf;
     merge(this.app.config, failsafeConfig);
   }
 
