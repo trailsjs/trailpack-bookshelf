@@ -22,13 +22,16 @@ const config = require('./config');
 const pkg = require('../package');
 const api = require('./api');
 
+const BOOKSHELF = 'bookshelf';
+
 const databaseConfigSchema = object().keys({
   models: object().keys({
     defaultStore: string().required(),
     migrate: any().allow(['none', 'drop', 'alter']),
     hasTimestamps: boolean()
   }),
-  stores: object()
+  stores: object(),
+  orm: any()
 });
 
 const storeSchema = object().keys({
@@ -44,7 +47,7 @@ const failsafeConfig =  {
 };
 
 const findBsStores = stores => reduce(stores, (res, store, storeName) =>
-  Object.assign(res, store.orm === 'bookshelf' ? { [storeName]: store } : {}), {});
+  Object.assign(res, store.orm === BOOKSHELF ? { [storeName]: store } : {}), {});
 
 /**
  * Bookshelf Trailpack
@@ -90,9 +93,8 @@ module.exports = class BookshelfTrailpack extends DatastoreTrailpack {
   configure() {
     super.configure();
     const { orm } = this.app.config.database;
-    const bookshelf = 'bookshelf';
     this.app.config.database.orm =
-      orm ? (isArray(orm) ? orm.concat([bookshelf]) : [orm, bookshelf]) : bookshelf;
+      orm ? (isArray(orm) ? orm.concat([BOOKSHELF]) : [orm, BOOKSHELF]) : BOOKSHELF;
     merge(this.app.config, failsafeConfig);
   }
 
