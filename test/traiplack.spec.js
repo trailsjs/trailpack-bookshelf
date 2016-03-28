@@ -18,7 +18,7 @@ describe('Trailpack', () => {
     app = new TrailsApp(config);
     pack = new Pack(app);
   });
-  describe('#validate', () => {
+  describe('#validate()', () => {
     it('should succeed with valid config', () => pack.validate());
     it('should fail if store.client is not supported', () => {
       const { client } = app.config.database.stores.teststore;
@@ -49,8 +49,19 @@ describe('Trailpack', () => {
           delete app.config.database.stores.other_store;
         });
     });
+    it('should succeed after #unload()', () => pack
+      .validate()
+      .then(() => pack.unload())
+      .then(() => pack.validate())
+    );
+    it('should succeed after #configure() and #unload()', () => {
+      pack.configure();
+      return pack
+        .unload()
+        .then(() => pack.validate());
+    });
   });
-  describe('#configure', () => {
+  describe('#configure()', () => {
     it('should configure pack without an error', () => pack.configure());
     it('should set app.config.database.orm', () => {
       pack.configure();
@@ -70,7 +81,7 @@ describe('Trailpack', () => {
       app.config.database.orm.should.be.eql(['other_orm', 'yet_another_orm', 'bookshelf']);
     });
   });
-  describe('#initialize', () => {
+  describe('#initialize()', () => {
     const startApp = (config) => start(config).then(_app => app = _app);
     afterEach(() => app.stop());
     it('should extend app.orm with bookshelf models', () => startApp()
@@ -142,5 +153,15 @@ describe('Trailpack', () => {
         model.bookshelf.knex.schema.hasTable(model.forge().tableName).should.eventually.be.false;
       }))
       .then(() => config.config.database.models.migrate = 'drop'));
+  });
+  describe('#unbind()', () => {
+    const startApp = (config) => start(config).then(_app => app = _app);
+    beforeEach(() => startApp());
+    it('should destroy all knex connections', () => app
+      .stop()
+      .then(() => app.packs.bookshelf.stores.teststore.bookshelf.knex.client)
+      .should.eventually
+      .have.property('pool').not.exist
+    );
   });
 });
