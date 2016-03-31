@@ -190,6 +190,10 @@ module.exports = class BookshelfTrailpack extends DatastoreTrailpack {
    * Close all database connections
    */
   unload() {
-    return promiseEach(values(this.stores), store => store.bookshelf.knex.destroy());
+    return promiseEach(values(this.stores), ({bookshelf}) => {
+      /*eslint no-underscore-dangle: 0*/
+      delete bookshelf._models;
+      return bookshelf.knex.destroy();
+    });
   }
 };

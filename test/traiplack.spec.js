@@ -153,8 +153,14 @@ describe('Trailpack', () => {
         model.bookshelf.knex.schema.hasTable(model.forge().tableName).should.eventually.be.false;
       }))
       .then(() => config.config.database.models.migrate = 'drop'));
+    it('should succeed after #unload(), #configure(), #initialize(), #unload', () => startApp(config)
+      .then(() => app.packs.bookshelf.unload())
+      .then(() => {
+        app.packs.bookshelf.configure();
+        return app.packs.bookshelf.initialize();
+      }));
   });
-  describe('#unbind()', () => {
+  describe('#unload()', () => {
     const startApp = (config) => start(config).then(_app => app = _app);
     beforeEach(() => startApp());
     it('should destroy all knex connections', () => app
