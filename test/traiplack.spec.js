@@ -63,22 +63,10 @@ describe('Trailpack', () => {
   });
   describe('#configure()', () => {
     it('should configure pack without an error', () => pack.configure());
-    it('should set app.config.database.orm', () => {
-      pack.configure();
-      app.config.database.orm.should.be.equal('bookshelf');
-    });
     it('should not overwrite existing app.config.database.orm', () => {
       app.config.database.orm = 'other_orm';
       pack.configure();
       app.config.database.orm.should.not.be.equal('bookshelf');
-    });
-    it('should add "bookshelf" to existing app.config.database.orm', () => {
-      app.config.database.orm = 'other_orm';
-      pack.configure();
-      app.config.database.orm.should.be.eql(['other_orm', 'bookshelf']);
-      app.config.database.orm = ['other_orm', 'yet_another_orm'];
-      pack.configure();
-      app.config.database.orm.should.be.eql(['other_orm', 'yet_another_orm', 'bookshelf']);
     });
   });
   describe('#initialize()', () => {
@@ -138,21 +126,23 @@ describe('Trailpack', () => {
     it('should create tables if config.models.migrate = "drop"', () => startApp()
       .then(() => each(Object.keys(config.api.models), modelName =>
         app.orm[modelName].forge().fetchAll())));
-    it('should do nothing with DB with if config.models.migrate = "none" is set', () => startApp()
-      .then(() => each(Object.keys(config.api.models), modelName => {
-        const { [modelName]: model } = app.orm;
-        return model.bookshelf.knex.schema.dropTableIfExists(model.forge().tableName);
-      }))
-      .then(() => app.stop())
-      .then(() => {
-        config.config.database.models.migrate = 'none';
-        return startApp(config);
-      })
-      .then(() => each(Object.keys(config.api.models), modelName => {
-        const { [modelName]: model } = app.orm;
-        model.bookshelf.knex.schema.hasTable(model.forge().tableName).should.eventually.be.false;
-      }))
-      .then(() => config.config.database.models.migrate = 'drop'));
+    it('should do nothing with DB with if config.models.migrate = "none" is set', () => {
+      config.config.database.models.migrate = 'none';
+      return startApp(config)
+        .then(() => each(Object.keys(config.api.models), modelName => {
+          const { [modelName]: model } = app.orm;
+          return model.bookshelf.knex.schema.dropTableIfExists(model.forge().tableName);
+        }))
+        .then(() => app.stop())
+        .then(() => {
+          // config.config.database.models.migrate = 'none';
+          return startApp(config);
+        })
+        .then(() => each(Object.keys(config.api.models), modelName => {
+          const { [modelName]: model } = app.orm;
+          model.bookshelf.knex.schema.hasTable(model.forge().tableName).should.eventually.be.false;
+        }));
+    });
     it('should succeed after #unload(), #configure(), #initialize(), #unload', () => startApp(config)
       .then(() => app.packs.bookshelf.unload())
       .then(() => {
