@@ -28,7 +28,6 @@
     "joi": "^8.1.0",
     "knex": "^0.11.3",
     "lodash": "^4.12.0",
-    "trailpack": "^1.0.2",
     "trailpack-datastore": "^1.0.1",
     "trails-service": "^1.0.0-beta-2"
   },
