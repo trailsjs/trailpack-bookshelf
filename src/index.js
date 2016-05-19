@@ -97,7 +97,7 @@ module.exports = class BookshelfTrailpack extends DatastoreTrailpack {
    * Merge configuration into models.
    */
   configure() {
-    super.configure();
+    this.app.config.database.orm = 'bookshelf';
     merge(this.app.config, failsafeConfig);
   }
 

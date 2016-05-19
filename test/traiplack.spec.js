@@ -63,11 +63,6 @@ describe('Trailpack', () => {
   });
   describe('#configure()', () => {
     it('should configure pack without an error', () => pack.configure());
-    it('should not overwrite existing app.config.database.orm', () => {
-      app.config.database.orm = 'other_orm';
-      pack.configure();
-      app.config.database.orm.should.not.be.equal('bookshelf');
-    });
   });
   describe('#initialize()', () => {
     const startApp = (config) => start(config).then(_app => app = _app);
@@ -133,22 +128,16 @@ describe('Trailpack', () => {
           const { [modelName]: model } = app.orm;
           return model.bookshelf.knex.schema.dropTableIfExists(model.forge().tableName);
         }))
-        .then(() => app.stop())
-        .then(() => {
-          // config.config.database.models.migrate = 'none';
-          return startApp(config);
-        })
+        .then(() => app.packs.bookshelf.unload())
+        .then(() => app.packs.bookshelf.initialize())
         .then(() => each(Object.keys(config.api.models), modelName => {
           const { [modelName]: model } = app.orm;
           model.bookshelf.knex.schema.hasTable(model.forge().tableName).should.eventually.be.false;
         }));
     });
-    it('should succeed after #unload(), #configure(), #initialize(), #unload', () => startApp(config)
+    it('should succeed after #unload()', () => startApp(config)
       .then(() => app.packs.bookshelf.unload())
-      .then(() => {
-        app.packs.bookshelf.configure();
-        return app.packs.bookshelf.initialize();
-      }));
+      .then(() => app.packs.bookshelf.initialize()));
   });
   describe('#unload()', () => {
     const startApp = (config) => start(config).then(_app => app = _app);
