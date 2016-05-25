@@ -18,7 +18,7 @@ describe('Trailpack', () => {
     app = new TrailsApp(config);
     pack = new Pack(app);
   });
-  describe('#validate', () => {
+  describe('#validate()', () => {
     it('should succeed with valid config', () => pack.validate());
     it('should fail if store.client is not supported', () => {
       const { client } = app.config.database.stores.teststore;
@@ -49,28 +49,22 @@ describe('Trailpack', () => {
           delete app.config.database.stores.other_store;
         });
     });
+    it('should succeed after #unload()', () => pack
+      .validate()
+      .then(() => pack.unload())
+      .then(() => pack.validate())
+    );
+    it('should succeed after #configure() and #unload()', () => {
+      pack.configure();
+      return pack
+        .unload()
+        .then(() => pack.validate());
+    });
   });
-  describe('#configure', () => {
+  describe('#configure()', () => {
     it('should configure pack without an error', () => pack.configure());
-    it('should set app.config.database.orm', () => {
-      pack.configure();
-      app.config.database.orm.should.be.equal('bookshelf');
-    });
-    it('should not overwrite existing app.config.database.orm', () => {
-      app.config.database.orm = 'other_orm';
-      pack.configure();
-      app.config.database.orm.should.not.be.equal('bookshelf');
-    });
-    it('should add "bookshelf" to existing app.config.database.orm', () => {
-      app.config.database.orm = 'other_orm';
-      pack.configure();
-      app.config.database.orm.should.be.eql(['other_orm', 'bookshelf']);
-      app.config.database.orm = ['other_orm', 'yet_another_orm'];
-      pack.configure();
-      app.config.database.orm.should.be.eql(['other_orm', 'yet_another_orm', 'bookshelf']);
-    });
   });
-  describe('#initialize', () => {
+  describe('#initialize()', () => {
     const startApp = (config) => start(config).then(_app => app = _app);
     afterEach(() => app.stop());
     it('should extend app.orm with bookshelf models', () => startApp()
@@ -127,20 +121,32 @@ describe('Trailpack', () => {
     it('should create tables if config.models.migrate = "drop"', () => startApp()
       .then(() => each(Object.keys(config.api.models), modelName =>
         app.orm[modelName].forge().fetchAll())));
-    it('should do nothing with DB with if config.models.migrate = "none" is set', () => startApp()
-      .then(() => each(Object.keys(config.api.models), modelName => {
-        const { [modelName]: model } = app.orm;
-        return model.bookshelf.knex.schema.dropTableIfExists(model.forge().tableName);
-      }))
-      .then(() => app.stop())
-      .then(() => {
-        config.config.database.models.migrate = 'none';
-        return startApp(config);
-      })
-      .then(() => each(Object.keys(config.api.models), modelName => {
-        const { [modelName]: model } = app.orm;
-        model.bookshelf.knex.schema.hasTable(model.forge().tableName).should.eventually.be.false;
-      }))
-      .then(() => config.config.database.models.migrate = 'drop'));
+    it('should do nothing with DB with if config.models.migrate = "none" is set', () => {
+      config.config.database.models.migrate = 'none';
+      return startApp(config)
+        .then(() => each(Object.keys(config.api.models), modelName => {
+          const { [modelName]: model } = app.orm;
+          return model.bookshelf.knex.schema.dropTableIfExists(model.forge().tableName);
+        }))
+        .then(() => app.packs.bookshelf.unload())
+        .then(() => app.packs.bookshelf.initialize())
+        .then(() => each(Object.keys(config.api.models), modelName => {
+          const { [modelName]: model } = app.orm;
+          model.bookshelf.knex.schema.hasTable(model.forge().tableName).should.eventually.be.false;
+        }));
+    });
+    it('should succeed after #unload()', () => startApp(config)
+      .then(() => app.packs.bookshelf.unload())
+      .then(() => app.packs.bookshelf.initialize()));
+  });
+  describe('#unload()', () => {
+    const startApp = (config) => start(config).then(_app => app = _app);
+    beforeEach(() => startApp());
+    it('should destroy all knex connections', () => app
+      .stop()
+      .then(() => app.packs.bookshelf.stores.teststore.bookshelf.knex.client)
+      .should.eventually
+      .have.property('pool').not.exist
+    );
   });
 });

@@ -10,7 +10,8 @@ const {
   mapValues,
   values,
   uniq,
-  pickBy
+  pickBy,
+  pick
   } = require('lodash');
 const DatastoreTrailpack = require('trailpack-datastore');
 const { object, string, any, boolean, validate } = require('joi');
@@ -22,13 +23,16 @@ const config = require('./config');
 const pkg = require('../package');
 const api = require('./api');
 
+const BOOKSHELF = 'bookshelf';
+
 const databaseConfigSchema = object().keys({
   models: object().keys({
     defaultStore: string().required(),
     migrate: any().allow(['none', 'drop', 'alter']),
     hasTimestamps: boolean()
   }),
-  stores: object()
+  stores: object(),
+  orm: any()
 });
 
 const storeSchema = object().keys({
@@ -44,7 +48,12 @@ const failsafeConfig =  {
 };
 
 const findBsStores = stores => reduce(stores, (res, store, storeName) =>
-  Object.assign(res, store.orm === 'bookshelf' ? { [storeName]: store } : {}), {});
+  Object.assign(
+    res,
+    store.orm === BOOKSHELF ?
+    { [storeName]: pick(store, 'client', 'connection', 'useNullAsDefault') } :
+    {}
+  ), {});
 
 /**
  * Bookshelf Trailpack
@@ -73,7 +82,7 @@ module.exports = class BookshelfTrailpack extends DatastoreTrailpack {
       .then(() => {
         const invalidStore = find(bsStores, store => {
           try {
-            require(store.client);
+            require.resolve(store.client);
           } catch (e) {
             return true;
           }
@@ -88,11 +97,7 @@ module.exports = class BookshelfTrailpack extends DatastoreTrailpack {
    * Merge configuration into models.
    */
   configure() {
-    super.configure();
-    const { orm } = this.app.config.database;
-    const bookshelf = 'bookshelf';
-    this.app.config.database.orm =
-      orm ? (isArray(orm) ? orm.concat([bookshelf]) : [orm, bookshelf]) : bookshelf;
+    this.app.config.database.orm = 'bookshelf';
     merge(this.app.config, failsafeConfig);
   }
 
@@ -113,6 +118,7 @@ module.exports = class BookshelfTrailpack extends DatastoreTrailpack {
         this.stores = mapValues(
           bsStores,
           (store, storeName) => {
+            delete require.cache[require.resolve(store.client)];
             const bs = bookshelf(knex(store));
             let { plugins } = store;
             if (isArray(plugins)) {
@@ -140,6 +146,9 @@ module.exports = class BookshelfTrailpack extends DatastoreTrailpack {
         return bookshelf
           .knex
           .transaction(txn => {
+            if (migrate === 'create') {
+              return SchemaMigrationService.create(txn, models);
+            }
             if (migrate === 'drop') {
               return SchemaMigrationService
                 .drop(txn, models)
@@ -188,6 +197,10 @@ module.exports = class BookshelfTrailpack extends DatastoreTrailpack {
    * Close all database connections
    */
   unload() {
-    return promiseEach(values(this.stores), store => store.bookshelf.knex.destroy());
+    return promiseEach(values(this.stores), ({bookshelf}) => {
+      /*eslint no-underscore-dangle: 0*/
+      delete bookshelf._models;
+      return bookshelf.knex.destroy();
+    });
   }
 };
