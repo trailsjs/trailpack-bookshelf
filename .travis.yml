@@ -16,7 +16,7 @@ deploy:
   provider: npm
   email: hello@trailsjs.io
   api_key:
-    secure: TODO
+    secure: LKY5aiZ7l7uVV5C65T0ZndF4OiNEGsOAf/rkCRMF/u9b09cfAzkNB3YO5LrPnPO6HG1UJtEnxh9RvK/cLk7rbBkzO0Vxhgn+5vmERcA28fzvawg1DNx66ZfWD8+U+skFlW8qCSkFN5Www6GDJIDzY8emnbSYxDviMpXd1xD/x8xhXLb/8MLGuKHE3jv+YvpyfIzwUap416Okx3a8+eSnH9wUTPNhkD5nBr/3B5SQfF0j0INkr/mMbHBQeFiYS69QqWnYh1Ig2HCS65YtQDcGx3LfTllBRm6wLHfmFgcysioeJ7/Nvb8RtZSgvQ7Cu3jQepn01qRZR2TOG2KwEcwDH5A+bCws6iscaW3ATJ3Lz8ZXj77uY//2VZZn5v1GaRW5Xc/bmDN6lLH/zImQzhKPaF/jUG9AfH8AeMgVllbOwwJZCUzxRksN53zt7o8dPG5scWPTvCF6nMPkHnE+rWDILFG0ZH+8SxbdaNUTtbe58autquxGGnX3J0BOadhsKxWVLKd85B6UpOCmS/BkVlmVC6wNQthghGluGv7x5cQeec9SyQhVT6Uy2mRaL9YIgjIfgdjuCPG/gAHpHsQ3YnCcFIvAk2k4RZ1jRnyqxO4EXj3U07jJowX1Q+pxPwaBai1meK9MgzqEsEFwGnvP0meaxldUQa0oo3G8GYH4fdzoDqY=
   on:
     tags: true
     repo: trailsjs/trailpack-bookshelf
