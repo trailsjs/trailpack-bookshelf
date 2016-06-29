@@ -23,7 +23,7 @@
   ],
   "dependencies": {
     "bluebird": "^3.4.0",
-    "bookshelf": "^0.9.5",
+    "bookshelf": "^0.10.0",
     "bookshelf-schema": "^0.2.3",
     "joi": "^8.1.0",
     "knex": "^0.11.3",
