@@ -47,7 +47,7 @@
     "sqlite3": "^3.1.5",
     "trailpack-core": "^1.0.0-beta-6",
     "trails": "^1.0.0",
-    "trails-model": "^1.0.0-beta-2"
+    "trails-model": "^2.0.1"
   },
   "scripts": {
     "clean:coverage": "rm -rf ./coverage",
