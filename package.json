@@ -28,7 +28,7 @@
     "joi": "^10.0.1",
     "knex": "^0.12.4",
     "lodash": "^4.16.0",
-    "trailpack-datastore": "^1.0.2",
+    "trailpack-datastore": "^2.0.0",
     "trails-service": "^2.0.0"
   },
   "devDependencies": {
