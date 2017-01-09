@@ -1,6 +1,5 @@
 # trailpack-bookshelf
 
-[![Gitter][gitter-image]][gitter-url]
 [![Build status][ci-image]][ci-url]
 [![Dependency Status][daviddm-image]][daviddm-url]
 [![codecov.io][codecov-image]][codecov-url]

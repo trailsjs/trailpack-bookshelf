@@ -1,6 +1,6 @@
 {
   "name": "trailpack-bookshelf",
-  "version": "1.0.0-alpha-1",
+  "version": "2.0.0-alpha-1",
   "description": "Bookshelf Trailpack",
   "homepage": "https://github.com/trailsjs/trailpack-bookshelf",
   "author": {
@@ -23,31 +23,31 @@
   ],
   "dependencies": {
     "bluebird": "^3.4.0",
-    "bookshelf": "^0.9.5",
-    "bookshelf-schema": "^0.2.3",
-    "joi": "^8.1.0",
-    "knex": "^0.11.3",
-    "lodash": "^4.13.1",
-    "trailpack-datastore": "^1.0.1",
-    "trails-service": "^1.0.0-beta-2"
+    "bookshelf": "^0.10.0",
+    "bookshelf-schema": "^0.3.0",
+    "joi": "^10.0.1",
+    "knex": "^0.12.4",
+    "lodash": "^4.16.0",
+    "trailpack-datastore": "^2.0.0",
+    "trails-service": "^2.0.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.9.0",
-    "babel-eslint": "^6.0.4",
+    "babel-cli": "^6.10.1",
+    "babel-eslint": "^7.1.0",
     "babel-preset-es2015-node4": "^2.1.0",
     "babel-register": "^6.9.0",
     "chai": "^3.5.0",
-    "chai-as-promised": "^5.3.0",
+    "chai-as-promised": "^6.0.0",
     "codecov": "^1.0.1",
-    "eslint": "^2.10.2",
-    "eslint-config-trails": "^1.0.6",
-    "mocha": "^2.5.0",
-    "nyc": "^6.4.4",
-    "smokesignals": "^1.2.2",
-    "sqlite3": "^3.1.4",
-    "trailpack-core": "^1.0.0-beta-6",
-    "trails": "^1.0.0",
-    "trails-model": "^1.0.0-beta-2"
+    "eslint": "^3.5.0",
+    "eslint-config-trails": "^2.0.0",
+    "mocha": "^3.0.0",
+    "nyc": "^10.0.0",
+    "smokesignals": "^2.1.0",
+    "sqlite3": "^3.1.5",
+    "trailpack-core": "^2.0.0",
+    "trails": "^2.0.0",
+    "trails-model": "^2.0.1"
   },
   "scripts": {
     "clean:coverage": "rm -rf ./coverage",

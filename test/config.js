@@ -1,6 +1,6 @@
 'use strict';
 const { defaultsDeep } = require('lodash');
-const { FailsafeConfig, Trailpack } = require('smokesignals');
+const { FailsafeConfig } = require('smokesignals');
 const Model = require('trails-model');
 
 module.exports = defaultsDeep({
@@ -115,7 +115,6 @@ module.exports = defaultsDeep({
   config: {
     main: {
       packs: [
-        Trailpack,
         require('trailpack-core'),
         require('../src')
       ]
