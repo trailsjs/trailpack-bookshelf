@@ -13,7 +13,7 @@ module.exports = defaultsDeep({
         static config() {
           return {};
         }
-        static schema (table) {
+        static schema (app, table) {
           if (table) {
             table.string('name').notNullable().unique();
             return table;
@@ -38,7 +38,7 @@ module.exports = defaultsDeep({
             tableName: 'user_role'
           };
         }
-        static schema(table) {
+        static schema(app, table) {
           if (table) {
             table.integer('user_id').notNullable().references('id').inTable('user');
             table.integer('role_id').notNullable().references('id').inTable('role');
@@ -59,7 +59,7 @@ module.exports = defaultsDeep({
         static config() {
           return {};
         }
-        static schema(table) {
+        static schema(app, table) {
           if (table) {
             table.string('name').notNullable().unique();
             return table;
@@ -76,7 +76,7 @@ module.exports = defaultsDeep({
         static config() {
           return {};
         }
-        static schema(table) {
+        static schema(app, table) {
           if (table) {
             table.string('first_name');
             table.string('last_name');
@@ -95,7 +95,7 @@ module.exports = defaultsDeep({
         static config() {
           return {};
         }
-        static schema(table) {
+        static schema(app, table) {
           if (table) {
             table.string('title').notNullable();
             table.string('text').notNullable();
