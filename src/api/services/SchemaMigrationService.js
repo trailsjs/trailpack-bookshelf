@@ -26,9 +26,6 @@ module.exports = class SchemaMigrationService extends Service {
       this.app.log
         .debug(`SchemaMigrationService: performing "create" migration for model ${tableName}`);
       return txn.schema.createTableIfNotExists(model.getTableName(), table => {
-        let { idAttribute } = config;
-        idAttribute = idAttribute || 'id';
-        table.increments(idAttribute).primary();
         if (config.hasTimestamps || (isUndefined(config.hasTimestamps) && hasTimestamps)) {
           if (isArray(hasTimestamps)) {
             table.timestamp(hasTimestamps[0]).defaultTo(table.client.raw('CURRENT_TIMESTAMP'));
