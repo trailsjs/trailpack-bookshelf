@@ -22,7 +22,7 @@ module.exports = class SchemaMigrationService extends Service {
     const { hasTimestamps } = this.app.config.database.models;
     return each(values(models), model => {
       const tableName = model.getTableName();
-      const config = model.constructor.config() || {};
+      const config = model.constructor.config(this.app) || {};
       this.app.log
         .debug(`SchemaMigrationService: performing "create" migration for model ${tableName}`);
       return txn.schema.createTableIfNotExists(model.getTableName(), table => {
@@ -35,7 +35,7 @@ module.exports = class SchemaMigrationService extends Service {
             table.timestamp('updated_at').defaultTo(table.client.raw('CURRENT_TIMESTAMP'));
           }
         }
-        return model.constructor.schema(table);
+        return model.constructor.schema(this.app, table);
       });
     });
   }

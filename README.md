@@ -29,7 +29,7 @@ module.exports = {
 module.exports = {
   stores: {
     knexPostgres: {
-      orm: 'bookshelf',   
+      orm: 'bookshelf',
       client: 'pg',
 
       /**
@@ -61,32 +61,32 @@ the first argument and values from `config()` as the second argument.
 ```js
 // api/models/User.js
 class User extends Model {
-  static schema(table) {
+  static schema(app, table) {
     //table definition for migrate='drop'
     if (table) {
       table.increments('id').primary();
       table.string('name').notNullable();
-      return       
+      return
     } else {
-      // booskelf model prototypeProperties   
+      // booskelf model prototypeProperties
       return {
         profile() {
           return this.hasOne('profile');
         }
       }
-    } 
+    }
   }
 }
 
 // api/models/Profile.js
 class Profile extends Model {
-  static config() {
+  static config(app, bookshelf) {
     // booskelf model classProperties
     return {
       tableName: 'user_profile'
     };
   }
-  static schema(table) {
+  static schema(app, table) {
     //table definition for migrate='drop'
     if (table) {
       table.string('first_name');

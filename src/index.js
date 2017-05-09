@@ -170,8 +170,8 @@ module.exports = class BookshelfTrailpack extends DatastoreTrailpack {
             const { constructor } = model;
             const { name } = constructor;
             let { config, schema } = constructor;
-            config = config() || {};
-            schema = schema() || {};
+            config = config(this.app, bookshelf) || {};
+            schema = schema(this.app) || {};
             this.app.orm[name] = bookshelf
               .model(
                 name,
