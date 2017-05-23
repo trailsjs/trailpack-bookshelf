@@ -1,6 +1,6 @@
 'use strict';
 
-const { isUndefined, values, isArray } = require('lodash');
+const { values, isArray } = require('lodash');
 const { each } = require('bluebird');
 const Service = require('trails-service');
 
@@ -19,14 +19,15 @@ module.exports = class SchemaMigrationService extends Service {
   }
 
   create(txn, models) {
-    const { hasTimestamps } = this.app.config.database.models;
+    let { hasTimestamps } = this.app.config.database.models;
     return each(values(models), model => {
       const tableName = model.getTableName();
       const config = model.constructor.config(this.app) || {};
       this.app.log
         .debug(`SchemaMigrationService: performing "create" migration for model ${tableName}`);
       return txn.schema.createTableIfNotExists(model.getTableName(), table => {
-        if (config.hasTimestamps || (isUndefined(config.hasTimestamps) && hasTimestamps)) {
+        hasTimestamps = config.hasTimestamps || hasTimestamps;
+        if (hasTimestamps) {
           if (isArray(hasTimestamps)) {
             table.timestamp(hasTimestamps[0]).defaultTo(table.client.raw('CURRENT_TIMESTAMP'));
             table.timestamp(hasTimestamps[1]).defaultTo(table.client.raw('CURRENT_TIMESTAMP'));
