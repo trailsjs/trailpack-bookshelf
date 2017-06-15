@@ -51,7 +51,7 @@ const findBsStores = stores => reduce(stores, (res, store, storeName) =>
   Object.assign(
     res,
     store.orm === BOOKSHELF ?
-    { [storeName]: pick(store, 'client', 'connection', 'useNullAsDefault') } :
+    { [storeName]: pick(store, 'client', 'connection', 'useNullAsDefault', 'plugins') } :
     {}
   ), {});
 
